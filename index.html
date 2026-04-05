@@ -601,8 +601,6 @@ body {
         <div class="field">
           <label>Team filter</label>
           <select id="teamFilter">
-            <option value="all">All</option>
-          </select>
         </div>
 
         <div class="field">
@@ -1176,7 +1174,7 @@ function getFilteredPlayers() {
       return { ...player, totals: sumStats(visibleStats) };
     })
     .filter(player => {
-      if (teamFilter !== 'all' && player.team !== teamFilter) return false;
+      if (teamFilter && player.team !== teamFilter) return false;
       if (roleFilter !== 'all' && player.role !== roleFilter) return false;
       if (search && !player.name.toLowerCase().includes(search)) return false;
       return Object.values(player.totals).some(v => Number(v) > 0);
@@ -1352,7 +1350,7 @@ function populateTeams() {
   const teamOptions = MLB_TEAMS.map(t => `<option value="${t}">${t}</option>`).join('');
   document.getElementById('teamSelect').innerHTML = teamOptions;
   document.getElementById('editTeam').innerHTML = teamOptions;
-  document.getElementById('teamFilter').innerHTML = `<option value="all">All teams</option>` + teamOptions;
+  document.getElementById('teamFilter').innerHTML = teamOptions;
   if (!document.getElementById('teamSelect').value) document.getElementById('teamSelect').value = 'Cincinnati Reds';
 }
 
@@ -2080,6 +2078,7 @@ function render() {
 
 function init() {
   populateTeams();
+  document.getElementById('teamFilter').value = MLB_TEAMS[0];
   populateSeasons();
   populateRbiPicker();
   setupPresetButtons();
