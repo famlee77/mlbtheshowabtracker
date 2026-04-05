@@ -482,6 +482,45 @@
 </head>
 <body>
 <div class="app">
+  <section class="hero">
+    <div class="hero-card">
+      <div class="eyebrow">⚾ MLB The Show matchup lab</div>
+      <h1>Track every pitcher, every season, every result.</h1>
+      <p class="subtext">Built for long-term matchup tracking with season ranges, separate starter/reliever views, RBI-aware logging, pin pitcher for rapid entry, team heat map, and auto-save.</p>
+      <div class="stats-grid">
+        <div class="mini-stat"><div class="label">Pitchers tracked</div><div class="value" id="heroPitchers">0</div></div>
+        <div class="mini-stat"><div class="label">Career AVG</div><div class="value" id="heroAvg">.000</div></div>
+        <div class="mini-stat"><div class="label">Career OPS</div><div class="value" id="heroOps">.000</div></div>
+        <div class="mini-stat"><div class="label">Career RBI</div><div class="value" id="heroRbi">0</div></div>
+      </div>
+    </div>
+
+    <div class="hero-card">
+      <div class="section-title">
+        <div>
+          <h2>Quick insights</h2>
+          <p>Instant read on your current filtered matchup profile.</p>
+        </div>
+      </div>
+      <div class="insights">
+        <div class="insight">
+          <h4>Pin pitcher</h4>
+          <p>Lock name, team, and role so you can log multiple ABs against the same pitcher without retyping.</p>
+        </div>
+        <div class="insight">
+          <h4>Team heat map</h4>
+          <p>Color-coded grid showing your AVG, OPS, HR, and K% against every franchise you've faced.</p>
+        </div>
+        <div class="insight">
+          <h4>Date-linked seasons</h4>
+          <p>The selected game year now automatically sets the season for every entry, and month/day are optional.</p>
+        </div>
+      </div>
+      <div class="footer-note">
+        Added result support: single, double, triple, HR, out, strikeout, walk, HBP, reached on error, and sac fly. Sac flies count as PA but not AB. Reached on error counts as AB but not a hit.
+      </div>
+    </div>
+  </section>
 
   <section class="layout">
     <aside class="card">
