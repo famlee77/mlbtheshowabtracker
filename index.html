@@ -1273,6 +1273,22 @@ function getPitcherSuggestions(query) {
   if (!q) return [];
 
   return Object.values(state.players)
+  .map(player => {
+    const normalizedRole =
+      player.role === 'Starter' ? 'SP' :
+      player.role === 'Reliever' ? 'RP' :
+      player.role;
+
+    const normalizedPlayer = { ...player, role: normalizedRole };
+
+    if (sample !== 'all') {
+      const entries = getFilteredPitcherLog(player.name);
+      return { ...normalizedPlayer, totals: buildStatsFromLog(entries) };
+    }
+
+    const visibleStats = seasons.map(s => player.seasons[s]).filter(Boolean);
+    return { ...normalizedPlayer, totals: sumStats(visibleStats) };
+  })
     .filter(p => p.name.toLowerCase().includes(q))
     .sort((a, b) => a.name.localeCompare(b.name))
     .slice(0, 8);
