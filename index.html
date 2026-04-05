@@ -600,7 +600,7 @@ body {
       <div class="toolbar">
         <div class="field">
           <label>Team filter</label>
-          <select id="teamFilter">
+          <select id="teamFilter"></select>
         </div>
 
         <div class="field">
@@ -1350,7 +1350,8 @@ function populateTeams() {
   const teamOptions = MLB_TEAMS.map(t => `<option value="${t}">${t}</option>`).join('');
   document.getElementById('teamSelect').innerHTML = teamOptions;
   document.getElementById('editTeam').innerHTML = teamOptions;
-  document.getElementById('teamFilter').innerHTML = teamOptions;
+  document.getElementById('teamFilter').innerHTML =
+      `<option value="">Select team</option>` + teamOptions;
   if (!document.getElementById('teamSelect').value) document.getElementById('teamSelect').value = 'Cincinnati Reds';
 }
 
@@ -2078,7 +2079,6 @@ function render() {
 
 function init() {
   populateTeams();
-  document.getElementById('teamFilter').value = MLB_TEAMS[0];
   populateSeasons();
   populateRbiPicker();
   setupPresetButtons();
