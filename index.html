@@ -1174,7 +1174,8 @@ function getFilteredPlayers() {
       return { ...player, totals: sumStats(visibleStats) };
     })
     .filter(player => {
-      if (teamFilter && player.team !== teamFilter) return false;
+      if (!teamFilter) return false;
+      if (player.team !== teamFilter) return false;
       if (roleFilter !== 'all' && player.role !== roleFilter) return false;
       if (search && !player.name.toLowerCase().includes(search)) return false;
       return Object.values(player.totals).some(v => Number(v) > 0);
