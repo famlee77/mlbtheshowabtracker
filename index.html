@@ -10,7 +10,7 @@
    TYPOGRAPHY FIX
 ============================= */
 .kpi .value {
-  font-size: 15px;
+  font-size: 10px;
   font-weight: 900;
   letter-spacing: -0.02em;
 }
@@ -478,6 +478,54 @@
     .form-grid, .toolbar, .kpi-strip, .stats-grid, .insights, .rbi-picker { grid-template-columns: 1fr 1fr; }
     .quick-picks, .btn-row, .log-actions, .tabs { flex-direction: column; }
   }
+    /* ===== YOUR NEW DESKTOP FIX ===== */
+
+body {
+  font-size: 14px;
+}
+
+h1 {
+  font-size: 28px;
+}
+
+h2 {
+  font-size: 18px;
+}
+
+button {
+  font-size: 13px;
+  padding: 6px 10px;
+}
+
+input, select {
+  font-size: 13px;
+  padding: 6px;
+}
+
+table {
+  font-size: 12px;
+}
+
+/* KPI shrink */
+.kpi .value {
+  font-size: 18px !important;
+}
+
+.kpi .label {
+  font-size: 10px !important;
+}
+
+/* tighter cards */
+.card {
+  padding: 12px !important;
+}
+
+/* limit width */
+.app {
+  max-width: 1100px !important;
+}
+
+/* ===== END FIX ===== */
 </style>
 </head>
 <body>
