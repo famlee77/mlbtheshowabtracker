@@ -302,7 +302,10 @@
   }
   .table-scroll { overflow: auto; }
 
-  table { width: 100%; border-collapse: collapse; min-width: 1260px; }
+  table { 
+  width: 100%; 
+  border-collapse: collapse; 
+}
 
   th, td { padding: 12px 12px; border-bottom: 1px solid rgba(255,255,255,.06); text-align: left; font-size: 14px; vertical-align: middle; }
 
@@ -472,20 +475,14 @@
     .toolbar { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .kpi-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   }
-
-  @media (max-width: 760px) {
-    .app { padding: 14px; }
-    .form-grid, .toolbar, .kpi-strip, .stats-grid, .insights, .rbi-picker { grid-template-columns: 1fr 1fr; }
-    .quick-picks, .btn-row, .log-actions, .tabs { flex-direction: column; }
-  }
-    /* ===== YOUR NEW DESKTOP FIX ===== */
+    /* ===== RESPONSIVE CLEANUP ===== */
 
 body {
   font-size: 14px;
 }
 
 h1 {
-  font-size: 28px;
+  font-size: clamp(26px, 4vw, 44px);
 }
 
 h2 {
@@ -494,133 +491,147 @@ h2 {
 
 button {
   font-size: 13px;
-  padding: 6px 10px;
 }
 
-input, select {
+input,
+select,
+textarea {
   font-size: 13px;
-  padding: 6px;
 }
 
-table {
-  font-size: 12px;
-}
-
-/* KPI shrink */
-.kpi .value {
-  font-size: 18px !important;
-}
-
-.kpi .label {
-  font-size: 10px !important;
-}
-
-/* tighter cards */
-.card {
-  padding: 12px !important;
-}
-
-/* limit width */
 .app {
-  max-width: 1100px !important;
-}
-
-/* ===== DESKTOP TIGHTENING ===== */
-
-/* shrink hero section */
-.hero-card {
-  padding: 18px !important;
-}
-
-h1 {
-  font-size: 24px !important;
-}
-
-/* tighten stat boxes */
-.mini-stat {
-  padding: 10px !important;
-}
-
-.mini-stat .value {
-  font-size: 20px !important;
-}
-
-/* make layout less wide */
-.layout {
-  grid-template-columns: 350px 1fr !important;
-}
-
-/* shrink form */
-.field input, 
-.field select {
-  padding: 8px !important;
-  font-size: 12px !important;
-}
-
-/* shrink buttons */
-button {
-  padding: 8px 10px !important;
-  font-size: 12px !important;
-}
-
-/* reduce spacing between sections */
-.section-title {
-  margin-bottom: 8px !important;
-}
-
-/* compress tables */
-th, td {
-  padding: 8px !important;
-  font-size: 12px !important;
-}
-/* ===== FINAL DESKTOP SHRINK ===== */
-
-@media (min-width: 1200px) {
-
-  .app {
-    max-width: 1000px !important;
-  }
-
-  h1 {
-    font-size: 22px !important;
-  }
-
-  .subtext {
-    font-size: 13px !important;
-  }
-
-  .mini-stat .value {
-    font-size: 18px !important;
-  }
-
-  .kpi .value {
-    font-size: 16px !important;
-  }
-
-  .layout {
-    grid-template-columns: 320px 1fr !important;
-  }
-
-  .hero {
-    gap: 12px !important;
-  }
-
-}
-
-.layout {
-    grid-template-columns: 280px 1fr !important;
-}
-
-table {
-    min-width: 900px !important;
-}
-
-.table-scroll {
-    overflow-x: auto;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
 }
 
 .hero {
-    grid-template-columns: 1fr 1fr !important;
+  grid-template-columns: 1.2fr 0.9fr;
+  gap: 20px;
+}
+
+.layout {
+  grid-template-columns: 380px 1fr;
+  gap: 20px;
+}
+
+.card {
+  padding: 18px;
+}
+
+.hero-card {
+  padding: 26px;
+}
+
+.mini-stat {
+  padding: 16px;
+}
+
+.mini-stat .value {
+  font-size: 28px;
+}
+
+.kpi .value {
+  font-size: 24px;
+}
+
+.kpi .label {
+  font-size: 12px;
+}
+
+table {
+  width: 100%;
+}
+
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* tablet */
+@media (max-width: 1100px) {
+  .hero,
+  .layout,
+  .split-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .toolbar {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .kpi-strip {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .stats-grid,
+  .insights {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* phone */
+@media (max-width: 700px) {
+  .app {
+    padding: 12px;
+  }
+
+  .hero-card,
+  .card {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .form-grid,
+  .toolbar,
+  .kpi-strip,
+  .stats-grid,
+  .insights,
+  .rbi-picker,
+  .split-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .quick-picks,
+  .btn-row,
+  .log-actions,
+  .tabs {
+    flex-direction: column;
+  }
+
+  button,
+  .tab-btn,
+  .chip {
+    width: 100%;
+  }
+
+  .pin-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  .subtext {
+    font-size: 14px;
+  }
+
+  .mini-stat .value,
+  .kpi .value {
+    font-size: 20px;
+  }
+
+  th,
+  td {
+    padding: 10px 8px;
+    font-size: 12px;
+  }
+
+  .heatmap-table {
+    min-width: 700px;
+  }
 }
     
 </style>
