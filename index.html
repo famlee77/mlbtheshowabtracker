@@ -1093,10 +1093,13 @@ function rebuildStateFromLog() {
 
 function subscribeToLogs() {
   onSnapshot(collection(db, "logs"), (snapshot) => {
-    state.log = snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
+      state.log = snapshot.docs.map(docSnap => {
+          const data = docSnap.data();
+          return {
+              ...data,
+              firestoreId: docSnap.id
+          };
+      });
 
     state.log.sort((a,b) => new Date(b.ts) - new Date(a.ts));
 
@@ -1608,7 +1611,7 @@ function renderChart(players) {
 
 function renderLogItem(item) {
   const pitcherJs = escapeJsString(item.pitcher);
-  const idJs = escapeJsString(item.id);
+  const entry = state.log.find(item => item.firestoreId === logId);
 
   return `<div class="log-item ${getLogClass(item.result)}" onclick="selectPitcher('${pitcherJs}')">
     <div class="log-top">
