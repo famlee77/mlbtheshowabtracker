@@ -1608,12 +1608,12 @@ function renderChart(players) {
 
 function renderLogItem(item) {
   const pitcherJs = escapeJsString(item.pitcher);
-  const entry = state.log.find(item => item.firestoreId === logId);
+  const idJs = escapeJsString(item.id);
 
   return `<div class="log-item ${getLogClass(item.result)}" onclick="selectPitcher('${pitcherJs}')">
     <div class="log-top">
       <strong>${escapeHtml(item.pitcher)}</strong>
-      <span class="result-badge">${resultLabel(item.result)}</span>
+      <span class="result-badge ${getResultBadgeClass(item.result)}">${resultLabel(item.result)}</span>
     </div>
     <div class="log-meta">
       ${escapeHtml(item.team)} • ${item.role==='SP'?'Starter':'Reliever'} • ${escapeHtml(item.season)} • ${prettyDate(item.gameDate)}
