@@ -1098,10 +1098,12 @@ function subscribeToLogs() {
   const logsRef = collection(db, "logs");
 
   onSnapshot(logsRef, (snapshot) => {
-    state.log = snapshot.docs.map(docSnap => ({
-      ...docSnap.data(),
-      id: docSnap.id
-    }));
+    state.log = snapshot.docs
+      .map(docSnap => ({
+        ...docSnap.data(),
+        id: docSnap.id
+      }))
+      .sort((a, b) => new Date(b.ts) - new Date(a.ts));
 
     rebuildStateFromLog();
     render(); // or whatever your main render function is
@@ -1582,20 +1584,27 @@ function renderKpis(players) {
 }
 
 function renderChart(players) {
-  const top = [...players].filter(p => p.totals.ab > 0)
-    .sort((a,b) => calcOps(b.totals) - calcOps(a.totals)).slice(0,12);
+  const top = [...players]
+    .filter(p => p.totals.ab > 0)
+    .sort((a, b) => calcAvg(b.totals) - calcAvg(a.totals))
+    .slice(0, 12);
+
   const labels = top.map(p => p.name);
-  const opsVals = top.map(p => Number(calcOps(p.totals).toFixed(3)));
+  const hOverAbVals = top.map(p => Number((p.totals.h / p.totals.ab).toFixed(3)));
+
   if (chart) chart.destroy();
+
   chart = new Chart(document.getElementById('avgChart'), {
     type: 'bar',
     data: {
       labels,
       datasets: [{
-        label: 'OPS',
-        data: opsVals,
+        label: 'H/AB',
+        data: hOverAbVals,
         borderRadius: 10,
-        backgroundColor: labels.map(() => getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#1d4ed8')
+        backgroundColor: labels.map(
+          () => getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#1d4ed8'
+        )
       }]
     },
     options: {
@@ -1603,7 +1612,12 @@ function renderChart(players) {
       plugins: { legend: { display: false } },
       scales: {
         x: { ticks: { color: '#cbd5e1' }, grid: { display: false } },
-        y: { beginAtZero: true, ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,.08)' } }
+        y: {
+          beginAtZero: true,
+          max: 1,
+          ticks: { color: '#94a3b8' },
+          grid: { color: 'rgba(255,255,255,.08)' }
+        }
       }
     }
   });
@@ -2160,7 +2174,7 @@ function init() {
     }
   });
 
-  subscribeToLogs();
+  
 }
  window.openEditModal = openEditModal;
  window.deleteLogEntry = deleteLogEntry;
