@@ -1092,17 +1092,18 @@ function rebuildStateFromLog() {
 }
 
 function subscribeToLogs() {
-  onSnapshot(collection(db, "logs"), (snapshot) => {
-      state.log = snapshot.docs.map(docSnap => ({
-          ...docSnap.data(),
-          id: docSnap.id
-      }));
+  const logsRef = collection(db, "logs");
 
-    state.log.sort((a,b) => new Date(b.ts) - new Date(a.ts));
+  onSnapshot(logsRef, (snapshot) => {
+    state.log = snapshot.docs.map(docSnap => ({
+      ...docSnap.data(),
+      id: docSnap.id
+    }));
 
     rebuildStateFromLog();
-    populateSeasons();
-    render();
+    render(); // or whatever your main render function is
+  }, (error) => {
+    console.error("Firestore error:", error);
   });
 }
 
@@ -2088,6 +2089,7 @@ function render() {
 function init() {
   populateTeams();
   populateSeasons();
+  subscribeToLogs();
   populateRbiPicker();
   setupPresetButtons();
   updatePinUI();
