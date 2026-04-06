@@ -686,7 +686,7 @@ body {
         <div class="split-grid">
           <div class="card">
             <h3>Pitcher AB-by-AB split log</h3>
-              <button onclick="deleteAllForPitcher(selectedPitcher)">
+              <button type="button" onclick="deleteSelectedPitcherLogs()">
                   Delete All ABs for Pitcher
               </button>
             <div id="pitcherAbLog"></div>
@@ -1961,12 +1961,19 @@ async function deleteAllForPitcher(pitcherName) {
   const snapshot = await getDocs(collection(db, "logs"));
 
   const matches = snapshot.docs.filter(docSnap =>
-    docSnap.data().pitcher === normalizeName(pitcherName)
+    normalizeName(docSnap.data().pitcher) === normalizeName(pitcherName)
   );
 
   for (const docSnap of matches) {
     await deleteDoc(doc(db, "logs", docSnap.id));
   }
+}
+function deleteSelectedPitcherLogs() {
+  if (!selectedPitcher) {
+    alert('Select a pitcher first.');
+    return;
+  }
+  deleteAllForPitcher(selectedPitcher);
 }
 
 function exportJson() {
@@ -2157,7 +2164,7 @@ function init() {
 }
  window.openEditModal = openEditModal;
  window.deleteLogEntry = deleteLogEntry;
- window.deleteAllForPitcher = deleteAllForPitcher;
+ window.deleteSelectedPitcherLogs = deleteSelectedPitcherLogs;
  window.selectPitcher = selectPitcher;
  window.changeAbPage = changeAbPage;
  window.saveEditedLogEntry = saveEditedLogEntry;
