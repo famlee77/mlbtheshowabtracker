@@ -943,7 +943,10 @@ function normalizeName(name) {
 function ensurePlayer(name, team, role) {
   const key = normalizeName(name);
   if (!state.players[key]) {
-    state.players[key] = { name: key, seasons: {}, notes: [] };
+    state.players[key] = { name: key, team, role, seasons: {}, notes: [] };
+  } else {
+    state.players[key].team = team || state.players[key].team;
+    state.players[key].role = role || state.players[key].role;
   }
   return state.players[key];
 }
@@ -1123,11 +1126,6 @@ function getPitcherSuggestions(query) {
 
   return Object.values(state.players)
     .filter(p => p.name.toLowerCase().includes(q))
-    .map(p => ({
-      ...p,
-      team: getCurrentTeamForPitcher(p.name),
-      role: getCurrentRoleForPitcher(p.name)
-    }))
     .sort((a, b) => a.name.localeCompare(b.name))
     .slice(0, 8);
 }
@@ -1172,22 +1170,12 @@ function getFilteredPlayers() {
 
   return Object.values(state.players)
     .map(player => {
-      let totals;
-
       if (sample !== 'all') {
         const entries = getFilteredPitcherLog(player.name);
-        totals = buildStatsFromLog(entries);
-      } else {
-        const visibleStats = seasons.map(s => player.seasons[s]).filter(Boolean);
-        totals = sumStats(visibleStats);
+        return { ...player, totals: buildStatsFromLog(entries) };
       }
-
-      return {
-        ...player,
-        totals,
-        team: getCurrentTeamForPitcher(player.name),
-        role: getCurrentRoleForPitcher(player.name)
-      };
+      const visibleStats = seasons.map(s => player.seasons[s]).filter(Boolean);
+      return { ...player, totals: sumStats(visibleStats) };
     })
     .filter(player => {
       if (!teamFilter) return false;
@@ -1196,7 +1184,7 @@ function getFilteredPlayers() {
       if (search && !player.name.toLowerCase().includes(search)) return false;
       return Object.values(player.totals).some(v => Number(v) > 0);
     })
-    .sort((a, b) => {
+    .sort((a,b) => {
       if (a.team !== b.team) return a.team.localeCompare(b.team);
       if (a.role !== b.role) return a.role.localeCompare(b.role);
       return a.name.localeCompare(b.name);
@@ -1522,33 +1510,6 @@ function getLastSeenDateForPitcher(playerName) {
     .filter(item => normalizeName(item.pitcher) === normalizeName(playerName))
     .sort((a,b) => sortableDate(b.gameDate).localeCompare(sortableDate(a.gameDate)));
   return entries[0]?.gameDate || '';
-}
-function getLastSeenDateForPitcher(playerName) {
-  const entries = state.log
-    .filter(item => normalizeName(item.pitcher) === normalizeName(playerName))
-    .sort((a,b) => sortableDate(b.gameDate).localeCompare(sortableDate(a.gameDate)));
-  return entries[0]?.gameDate || '';
-}
-function getLatestEntryForPitcher(playerName) {
-  const entries = state.log
-    .filter(item => normalizeName(item.pitcher) === normalizeName(playerName))
-    .sort((a, b) => {
-      const aDate = sortableDate(a.gameDate);
-      const bDate = sortableDate(b.gameDate);
-
-      if (aDate !== bDate) return bDate.localeCompare(aDate);
-      return new Date(b.ts) - new Date(a.ts);
-    });
-
-  return entries[0] || null;
-}
-
-function getCurrentTeamForPitcher(playerName) {
-  return getLatestEntryForPitcher(playerName)?.team || '';
-}
-
-function getCurrentRoleForPitcher(playerName) {
-  return getLatestEntryForPitcher(playerName)?.role || 'SP';
 }
 
 function renderRows(players, role, targetId, countId) {
