@@ -1093,13 +1093,10 @@ function rebuildStateFromLog() {
 
 function subscribeToLogs() {
   onSnapshot(collection(db, "logs"), (snapshot) => {
-      state.log = snapshot.docs.map(docSnap => {
-          const data = docSnap.data();
-          return {
-              ...data,
-              firestoreId: docSnap.id
-          };
-      });
+      state.log = snapshot.docs.map(docSnap => ({
+          ...docSnap.data(),
+          id: docSnap.id
+      }));
 
     state.log.sort((a,b) => new Date(b.ts) - new Date(a.ts));
 
@@ -1471,16 +1468,15 @@ async function addResult() {
   const stats = ensureSeason(player, season);
 
   const item = {
-    id: (crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random())),
-    pitcher: player.name,
-    team,
-    role,
-    season,
-    result,
-    rbi: selectedRBI,
-    note,
-    gameDate,
-    ts: new Date().toISOString()
+      pitcher: player.name,
+      team,
+      role,
+      season,
+      result,
+      rbi: selectedRBI,
+      note,
+      gameDate,
+      ts: new Date().toISOString()
   };
 
   if (note) {
