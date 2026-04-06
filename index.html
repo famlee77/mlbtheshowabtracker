@@ -773,8 +773,8 @@ body {
         </div>
       </div>
       <div class="btn-row">
-        <button class="primary" id="saveEditBtn" type="button">Save changes</button>
-        <button class="secondary" id="cancelEditBtn" type="button">Cancel</button>
+        <button class="primary" id="saveEditBtn" type="button" onclick="saveEditedLogEntry()">Save changes</button>
+        <button class="secondary" id="cancelEditBtn" type="button" onclick="closeEditModal()">Cancel</button>
       </div>
     </div>
   </div>
@@ -1902,42 +1902,50 @@ function closeEditModal() {
 }
 
 async function saveEditedLogEntry() {
-  if (!editingLogId) return;
+  try {
+    if (!editingLogId) {
+      alert('No log entry selected.');
+      return;
+    }
 
-  const newPitcher = document.getElementById('editPitcherName').value.trim();
-  const newTeam = document.getElementById('editTeam').value;
-  const newRole = document.getElementById('editRole').value;
-  const newResult = document.getElementById('editResult').value;
-  const newRbi = Number(document.getElementById('editRbi').value || 0);
-  const newNote = document.getElementById('editNote').value.trim();
-  const newMonth = document.getElementById('editMonth').value;
-  const newDay = document.getElementById('editDay').value;
-  const newYear = document.getElementById('editYear').value;
-  const newGameDate = buildGameDate(newYear, newMonth, newDay);
-  const newSeason = getSeasonFromDate(newGameDate) || String(newYear);
+    const newPitcher = document.getElementById('editPitcherName').value.trim();
+    const newTeam = document.getElementById('editTeam').value;
+    const newRole = document.getElementById('editRole').value;
+    const newResult = document.getElementById('editResult').value;
+    const newRbi = Number(document.getElementById('editRbi').value || 0);
+    const newNote = document.getElementById('editNote').value.trim();
+    const newMonth = document.getElementById('editMonth').value;
+    const newDay = document.getElementById('editDay').value;
+    const newYear = document.getElementById('editYear').value;
+    const newGameDate = buildGameDate(newYear, newMonth, newDay);
+    const newSeason = getSeasonFromDate(newGameDate) || String(newYear);
 
-  if (!newPitcher) {
-    alert('Pitcher name is required.');
-    return;
+    if (!newPitcher) {
+      alert('Pitcher name is required.');
+      return;
+    }
+
+    if (!newYear) {
+      alert('Year is required.');
+      return;
+    }
+
+    await updateDoc(doc(db, "logs", editingLogId), {
+      pitcher: normalizeName(newPitcher),
+      team: newTeam,
+      role: newRole,
+      season: newSeason,
+      result: newResult,
+      rbi: newRbi,
+      note: newNote,
+      gameDate: newGameDate
+    });
+
+    closeEditModal();
+  } catch (err) {
+    console.error('Save edit failed:', err);
+    alert('Save failed. Open DevTools console and check the error.');
   }
-
-  if (!newYear) {
-    alert('Year is required.');
-    return;
-  }
-
-  await updateDoc(doc(db, "logs", editingLogId), {
-    pitcher: normalizeName(newPitcher),
-    team: newTeam,
-    role: newRole,
-    season: newSeason,
-    result: newResult,
-    rbi: newRbi,
-    note: newNote,
-    gameDate: newGameDate
-  });
-
-  closeEditModal();
 }
 
 async function deleteLogEntry(logId) {
@@ -2134,6 +2142,8 @@ function init() {
  window.deleteLogEntry = deleteLogEntry;
  window.selectPitcher = selectPitcher;
  window.changeAbPage = changeAbPage;
+ window.saveEditedLogEntry = saveEditedLogEntry;
+ window.closeEditModal = closeEditModal;
 
 init();
 </script>
