@@ -1504,6 +1504,16 @@ async function undoLast() {
     alert('No recent add to undo.');
     return;
   }
+async function undoLast() {
+  if (!state.log.length) {
+    alert('No recent add to undo.');
+    return;
+  }
+
+  const last = state.log[0];
+  await deleteDoc(doc(db, "logs", last.id));
+}
+
 async function migratePitcherTeam(pitcherName, newTeam, newRole) {
   const normalized = normalizeName(pitcherName);
   const snapshot = await getDocs(collection(db, "logs"));
@@ -1520,9 +1530,6 @@ async function migratePitcherTeam(pitcherName, newTeam, newRole) {
       role: newRole
     });
   }
-}
-  const last = state.log[0];
-  await deleteDoc(doc(db, "logs", last.id));
 }
 
 function getLastSeenDateForPitcher(playerName) {
