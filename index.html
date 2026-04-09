@@ -1180,11 +1180,10 @@ function getFilteredPlayers() {
       return { ...player, totals: sumStats(visibleStats) };
     })
     .filter(player => {
-      if (!teamFilter) return false;
-      if (player.team !== teamFilter) return false;
-      if (roleFilter !== 'all' && player.role !== roleFilter) return false;
-      if (search && !player.name.toLowerCase().includes(search)) return false;
-      return Object.values(player.totals).some(v => Number(v) > 0);
+        if (teamFilter !== 'all' && player.team !== teamFilter) return false;
+        if (roleFilter !== 'all' && player.role !== roleFilter) return false;
+        if (search && !player.name.toLowerCase().includes(search)) return false;
+        return Object.values(player.totals).some(v => Number(v) > 0);
     })
     .sort((a,b) => {
       if (a.team !== b.team) return a.team.localeCompare(b.team);
@@ -1358,7 +1357,8 @@ function populateTeams() {
   document.getElementById('teamSelect').innerHTML = teamOptions;
   document.getElementById('editTeam').innerHTML = teamOptions;
   document.getElementById('teamFilter').innerHTML =
-      `<option value="">Select team</option>` + teamOptions;
+      `<option value="all">All teams</option>` + teamOptions;
+  document.getElementById('teamFilter').value = 'all';
   if (!document.getElementById('teamSelect').value) document.getElementById('teamSelect').value = 'Cincinnati Reds';
 }
 
@@ -1499,11 +1499,6 @@ async function addResult() {
   clearForm();
 }
 
-async function undoLast() {
-  if (!state.log.length) {
-    alert('No recent add to undo.');
-    return;
-  }
 async function undoLast() {
   if (!state.log.length) {
     alert('No recent add to undo.');
