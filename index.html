@@ -1469,6 +1469,8 @@ async function addResult() {
   if (!name) { alert('Enter a pitcher name first.'); return; }
   if (!year) { alert('Pick a year first.'); return; }
 
+  await migratePitcherTeam(name, team, role);
+
   if (!state.seasons.includes(season)) state.seasons.push(season);
   const player = ensurePlayer(name, team, role);
   const stats = ensureSeason(player, season);
@@ -1502,7 +1504,23 @@ async function undoLast() {
     alert('No recent add to undo.');
     return;
   }
+async function migratePitcherTeam(pitcherName, newTeam, newRole) {
+  const normalized = normalizeName(pitcherName);
+  const snapshot = await getDocs(collection(db, "logs"));
 
+  const matchingDocs = snapshot.docs.filter(docSnap => {
+    const data = docSnap.data();
+    return normalizeName(data.pitcher) === normalized &&
+           (data.team !== newTeam || data.role !== newRole);
+  });
+
+  for (const docSnap of matchingDocs) {
+    await updateDoc(doc(db, "logs", docSnap.id), {
+      team: newTeam,
+      role: newRole
+    });
+  }
+}
   const last = state.log[0];
   await deleteDoc(doc(db, "logs", last.id));
 }
@@ -1967,6 +1985,8 @@ async function saveEditedLogEntry() {
       alert('Year is required.');
       return;
     }
+
+    await migratePitcherTeam(newPitcher, newTeam, newRole);
 
     await updateDoc(doc(db, "logs", editingLogId), {
       pitcher: normalizeName(newPitcher),
