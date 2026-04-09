@@ -1170,7 +1170,7 @@ function getFilteredPlayers() {
   const seasons = getVisibleSeasons();
   const sample = document.getElementById('sampleFilter').value;
 
-  return Object.values(state.players)
+  let players = Object.values(state.players)
     .map(player => {
       if (sample !== 'all') {
         const entries = getFilteredPitcherLog(player.name);
@@ -1180,16 +1180,29 @@ function getFilteredPlayers() {
       return { ...player, totals: sumStats(visibleStats) };
     })
     .filter(player => {
-        if (teamFilter !== 'all' && player.team !== teamFilter) return false;
-        if (roleFilter !== 'all' && player.role !== roleFilter) return false;
-        if (search && !player.name.toLowerCase().includes(search)) return false;
-        return Object.values(player.totals).some(v => Number(v) > 0);
-    })
-    .sort((a,b) => {
+      if (teamFilter !== 'all' && player.team !== teamFilter) return false;
+      if (roleFilter !== 'all' && player.role !== roleFilter) return false;
+      if (search && !player.name.toLowerCase().includes(search)) return false;
+      return Object.values(player.totals).some(v => Number(v) > 0);
+    });
+
+  if (teamFilter === 'all' && !search) {
+    players = players
+      .map(player => ({
+        ...player,
+        lastSeen: getLastSeenDateForPitcher(player.name)
+      }))
+      .sort((a, b) => sortableDate(b.lastSeen).localeCompare(sortableDate(a.lastSeen)))
+      .slice(0, 50); // change 50 to 25 or 100 if you want
+  } else {
+    players = players.sort((a, b) => {
       if (a.team !== b.team) return a.team.localeCompare(b.team);
       if (a.role !== b.role) return a.role.localeCompare(b.role);
       return a.name.localeCompare(b.name);
     });
+  }
+
+  return players;
 }
 function getPitcherLog(pitcherName) {
   const seasons = getVisibleSeasons();
